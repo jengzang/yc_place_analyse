@@ -1,11 +1,31 @@
 import os
+import sys
 
 from rw import getdata
 from utils import check_duplicates, guide_user_to_element, resolve_duplicates
 
 
+# def get_resource_path(filename):
+#     """获取资源文件路径，适用于打包后的程序"""
+#     if getattr(sys, 'frozen', False):
+#         # 打包后，PyInstaller 会将资源放在 _MEIPASS 目录中
+#         bundle_dir = sys._MEIPASS
+#     else:
+#         # 开发环境中，资源文件与脚本在同一目录
+#         bundle_dir = os.path.abspath(os.path.dirname(__file__))
+#     return os.path.join(bundle_dir, filename)
+
+# 生成资源文件目录访问路径
+def resource_path(relative_path):
+    if getattr(sys, 'frozen', False):  # 是否Bundle Resource
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+
 def create_dialects_file(data):
-    file_path = 'dialects.txt'
+    file_path = resource_path(os.path.join("res", "dialects.txt"))
     separator = '**separator**'
 
     with open(file_path, 'w', encoding='utf-8') as file:
@@ -40,23 +60,19 @@ def create_dialects_file(data):
 
     print("成功创建文件 'dialects.txt' ，并已写入初始数据。")
 
-    # with open(file_path, 'r', encoding='utf-8') as file:
-    #     print(file.read())  # 调试输出创建文件的内容
-
 def query_dialects(data):
-    file_path = 'dialects.txt'
+    file_path = resource_path(os.path.join("res", "dialects.txt"))
     if not os.path.exists(file_path):
         print(f"文件 {file_path} 不存在，请先运行功能6创建文件。")
         return
-    # with open(file_path, 'r', encoding='utf-8') as file:
-         # print(file.read())  # 调试输出读取文件的内容
+
     print('*********************读取文件成功！**********************\n',
           '*****************************************************')
 
     dimension_names = ['方言分布', '名字由来', '人口', '注释', '维度5', '维度6']
 
     while True:
-        element_name = input("请输入镇街/村寨名 (输入0退出)：")
+        element_name = input("➤请输入镇街/村寨名 (输入0退出)：")
         if element_name == "0":
             break
 
@@ -67,8 +83,6 @@ def query_dialects(data):
                 continue
         else:
             chosen_path = resolve_duplicates(duplicates, element_name)
-            # 调试输出
-            # print('debug!', chosen_path)
             if chosen_path is None:
                 continue
 
@@ -80,22 +94,19 @@ def query_dialects(data):
             if not getdata(chosen_path, file_path, dimension_names, 'r'):
                 break  # 退出当前元素的维度选择，回到元素名称输入
 
-
 def write_dialects(data):
-    # print('debug:option7')
-    file_path = 'dialects.txt'
+    file_path = resource_path(os.path.join("res", "dialects.txt"))
     if not os.path.exists(file_path):
         print(f"文件 {file_path} 不存在，请先运行功能6创建文件。")
         return
-    # with open(file_path, 'r', encoding='utf-8') as file:
-        # print(file.read())  # 调试输出读取文件的内容
+
     print('*********************读取文件成功！**********************\n',
           '*****************************************************')
 
     dimension_names = ['方言分布', '名字由来', '人口', '注释', '维度5', '维度6']
 
     while True:
-        element_name = input("请输入镇街/村寨名 (输入0退出)：")
+        element_name = input("➤请输入镇街/村寨名 (输入0退出)：")
         if element_name == "0":
             break
 
@@ -106,8 +117,6 @@ def write_dialects(data):
                 continue
         else:
             chosen_path = resolve_duplicates(duplicates, element_name)
-            # 调试输出
-            # print('debug!', chosen_path)
             if chosen_path is None:
                 continue
 
@@ -119,17 +128,15 @@ def write_dialects(data):
             if not getdata(chosen_path, file_path, dimension_names, 'r+'):
                 break  # 退出当前元素的维度选择，回到元素名称输入
 
-
 def new_file(data, char):
-    file_path = 'dialects.txt'
     if char == 'query':
-        if os.path.exists(file_path):
+        if os.path.exists(resource_path(os.path.join("res", "dialects.txt"))):
             query_dialects(data)
         else:
             create_dialects_file(data)
             query_dialects(data)
     elif char == 'write':
-        if os.path.exists(file_path):
+        if os.path.exists(resource_path(os.path.join("res", "dialects.txt"))):
             write_dialects(data)
         else:
             print('请先运行功能6创建dialects.txt文件')
@@ -137,4 +144,3 @@ def new_file(data, char):
     else:
         print("出现未知错误，请联系开发者")
         return
-

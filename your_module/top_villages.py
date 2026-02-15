@@ -1,6 +1,4 @@
 from collections import Counter
-from data_parser import parse_village_file
-
 
 def find_top_n_villages(data, n):
     village_counter = Counter()
@@ -23,19 +21,3 @@ def find_top_n_villages(data, n):
         print(f"{village}：次数 {count}")
         for i in range(0, len(location_strs), 3):
             print("  " + "; ".join(location_strs[i:i + 3]))
-
-
-# def main():
-#     file_path = 'C:\\Users\\joengzaang\\PycharmProjects\\getvillagename\\阳春村庄名录.txt'
-#     try:
-#         data = parse_village_file(file_path)
-#     except FileNotFoundError:
-#         print(f"未找到文件：{file_path}")
-#         return
-#
-#     n = int(input("请输入要查询的前n个自然村："))
-#     find_top_n_villages(data, n)
-#
-#
-# if __name__ == "__main__":
-#     main()
